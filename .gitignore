@@ -1,0 +1,8 @@
+﻿.venv/
+.env
+__pycache__/
+qdrant_storage/
+*.pyc
+*.pyo
+.DS_Store
+check_models.py
