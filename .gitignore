@@ -6,3 +6,4 @@ qdrant_storage/
 *.pyo
 .DS_Store
 check_models.py
+uploads/

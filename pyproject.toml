@@ -14,4 +14,8 @@ dependencies = [
     "qdrant-client>=1.17.1",
     "streamlit>=1.56.0",
     "uvicorn>=0.44.0",
+    "pytesseract>=0.3.13",    # ← ADD THIS: Python wrapper for Tesseract OCR engine
+    "pdf2image>=1.17.0",      # ← ADD THIS: Converts PDF pages → PIL images
+    "Pillow>=11.0.0",
+    "groq>=1.6.0",
 ]
