@@ -25,3 +25,9 @@ class RAGQueryResult(pydantic.BaseModel):
     sources: list[str]        
     num_contexts: int        
     citations: list[dict]     
+
+
+class QueryRequest(pydantic.BaseModel):
+    question: str
+    top_k: int = 5
+    doc_ids: list[str] = None
