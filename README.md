@@ -32,6 +32,7 @@
 ---
 
 ## 🏗️ Architecture
+
 ┌─────────────────────────────────────────────────────┐
 │                   STREAMLIT UI                       │
 └──────────────────────┬──────────────────────────────┘
@@ -60,7 +61,7 @@ git clone https://github.com/GiniVerse-py/RAG-PDF-APP.git
 cd RAG-PDF-APP
 
 # 2️⃣ Setup
-python -m venv .venv
+python3 -m venv .venv
 .venv\Scripts\activate
 pip install -r requirements.txt
 
@@ -84,6 +85,7 @@ GROQ_API_KEY=your_groq_api_key
 ```
 
 ## 📁 Project Structure
+
 RAG-PDF-APP/
 │
 ├── 🚀 main.py            → FastAPI + Inngest functions

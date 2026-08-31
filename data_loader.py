@@ -40,18 +40,24 @@ def load_chunk_pdf(path: str):
     return chunks
 
 
-# Converts text into embeddings.
-def embed_texts(texts: list[str]) -> list[list[float]]:
+# Converts text into embeddings asynchronously.
+async def embed_texts(texts: list[str]) -> list[list[float]]:
     embeddings = []
+    processed_texts = []
     for text in texts:
         if isinstance(text, dict):
             text = text.get("text", str(text))
+        processed_texts.append(str(text))
 
-        result = client.models.embed_content(
+    batch_size = 100
+    for i in range(0, len(processed_texts), batch_size):
+        batch = processed_texts[i:i + batch_size]
+        result = await client.aio.models.embed_content(
             model=EMBED_MODEL,
-            contents=str(text)
-        )                #Here, our program sends the text to Google Gemini's Embedding API.Google processes the text and returns an embedding vector.
-        embeddings.append(result.embeddings[0].values)
+            contents=batch
+        )
+        for emb in result.embeddings:
+            embeddings.append(emb.values)
     return embeddings
 
 

@@ -9,8 +9,6 @@ import os
 import requests
 
 
-from vector_db import QdrantStorage
-
 
 load_dotenv()
 
@@ -26,15 +24,31 @@ def get_event_loop() -> asyncio.AbstractEventLoop:
     return loop
 
 
-@st.cache_resource
-def get_qdrant() -> QdrantStorage:
-    return QdrantStorage()
+def get_backend_url() -> str:
+    return os.getenv("BACKEND_URL", "http://127.0.0.1:8000")
+
+def get_all_documents() -> list[dict]:
+    try:
+        resp = requests.get(f"{get_backend_url()}/documents", timeout=10)
+        resp.raise_for_status()
+        return resp.json()
+    except Exception as e:
+        st.sidebar.error(f"Error fetching documents: {e}")
+        return []
+
+def delete_document(doc_id: str) -> bool:
+    try:
+        resp = requests.delete(f"{get_backend_url()}/documents/{doc_id}", timeout=10)
+        resp.raise_for_status()
+        return True
+    except Exception as e:
+        st.error(f"Error deleting document: {e}")
+        return False
  
 st.session_state["chat_history"] = []
 st.sidebar.header("📚 Indexed Documents")
 
-store = get_qdrant()
-all_docs = store.list_documents()
+all_docs = get_all_documents()
 
 
 if not all_docs:
@@ -45,9 +59,9 @@ else:
         col1, col2 = st.sidebar.columns([4, 1])
         col1.write(doc["filename"])
         if col2.button("🗑️", key=f"del_{doc['doc_id']}"):
-            store.delete_document(doc["doc_id"])
-            st.sidebar.success(f"Deleted {doc['filename']}")
-            st.rerun()
+            if delete_document(doc["doc_id"]):
+                st.sidebar.success(f"Deleted {doc['filename']}")
+                st.rerun()
         
 selected_filenames = st.sidebar.multiselect(
     "🔍 Search only in:",
@@ -98,7 +112,7 @@ def _inngest_api_base() -> str:
 def fetch_runs(event_id: str) -> list[dict]:
   
     url = f"{_inngest_api_base()}/events/{event_id}/runs"
-    resp = requests.get(url)
+    resp = requests.get(url, timeout=10)
     resp.raise_for_status()
     data = resp.json()
     return data.get("data", [])
